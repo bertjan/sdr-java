@@ -2,8 +2,8 @@ package nl.revolution.sdr.connectors.adsb.decoder;
 
 import nl.revolution.sdr.connectors.adsb.domain.FlightData;
 import nl.revolution.sdr.services.positiondata.api.PositionDataService;
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class Dump1090Source {
 
-    private static final Logger LOG = Log.getLogger(Dump1090Source.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Dump1090Source.class);
     private static final int FETCH_DATA_INTERVAL = 250;
 
     private final Dump1090Client dump1090Client;

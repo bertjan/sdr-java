@@ -5,10 +5,10 @@ import org.apache.commons.io.Charsets;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.Logger;
 import org.joda.time.DateTime;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +25,7 @@ public class PositionDataAPIHandler extends AbstractHandler {
     private static final String CONTENT_TYPE_JSON_UTF8 = "application/json;charset=utf-8";
     private static final long DEFAULT_MAX_AGE_IN_MINUTES = 15;
     private final PositionDataService positionDataService;
-    private static final Logger LOG = Log.getLogger(PositionDataAPIHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PositionDataAPIHandler.class);
 
     public PositionDataAPIHandler(PositionDataService positionDataService) {
         this.positionDataService = positionDataService;

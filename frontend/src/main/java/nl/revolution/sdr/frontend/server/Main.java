@@ -5,12 +5,12 @@ import nl.revolution.sdr.services.config.ConfigService;
 import nl.revolution.sdr.services.positiondata.api.PositionDataService;
 import nl.revolution.sdr.services.positiondata.mongodb.MongoPositionDataService;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main {
 
-    private static final Logger LOG = Log.getLogger(Main.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws Exception {
 

@@ -2,8 +2,8 @@ package nl.revolution.sdr.frontend.api;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class NotFoundHandler extends AbstractHandler {
 
-    private static final Logger LOG = Log.getLogger(NotFoundHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NotFoundHandler.class);
 
     public void handle(String target, Request baseRequest, HttpServletRequest request,
                        HttpServletResponse response) throws IOException, ServletException {

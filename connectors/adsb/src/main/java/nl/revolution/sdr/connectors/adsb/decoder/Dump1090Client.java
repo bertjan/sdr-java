@@ -6,11 +6,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import java.util.List;
 
 public class Dump1090Client {
 
-    private static final Logger LOG = Log.getLogger(Dump1090Client.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Dump1090Client.class);
 
     private static final String HTTP_STATUS_OK = "HTTP/1.1 200";
     private final CloseableHttpClient httpClient = HttpClients.createDefault();
