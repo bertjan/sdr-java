@@ -1,7 +1,9 @@
 sdr-java
 ==================
 Simple Software Defined Radio receiver for ADS-B and AIS in Java and JavaScript, using the Google maps API.
-This project depends on 'dump1090' by Salvatore Sanfilippo: https://github.com/antirez/dump1090.
+This project depends on:
+* 'dump1090' by Salvatore Sanfilippo: https://github.com/antirez/dump1090
+* 'aismessages' by Thomas Borg Salling: https://github.com/tbsalling/aismessages
  
 Background
 ---

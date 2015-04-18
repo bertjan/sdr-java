@@ -12,4 +12,22 @@
     <groupId>nl.revolution.sdr-java.connectors</groupId>
     <artifactId>ais</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>nl.revolution.sdr-java.services</groupId>
+            <artifactId>config</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.revolution.sdr-java.services</groupId>
+            <artifactId>positiondata</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>dk.tbsalling</groupId>
+            <artifactId>aismessages</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+    </dependencies>
+
 </project>
