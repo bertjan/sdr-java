@@ -29,7 +29,7 @@ $(document).ready(function () {
     var filter = $("#filter").val();
 
     var request = $.ajax({
-      url:  "/api/plane",
+      url:  "/api/positions",
       type: "GET",
       dataType: "json",
       data: { filter : filter },
@@ -52,16 +52,16 @@ $(document).ready(function () {
   function processFlightData(data) {
     $("#history").text(data.history);
     $("#updated").text(data.updated);
-    var flights = data.flights;
+    var flights = data.positions;
 
     var processedFlights = [];
 
     for (var i = 0, len = flights.length; i < len; i++) {
       (function(flightData) {
-        var flight = flightData.flight;
+        var objectId = flightData.objectId;
         var heading = flightData.heading;
         var positions = flightData.positions;
-        processedFlights.push(flight);
+        processedFlights.push(objectId);
 
         // Build list of coordinates for flight path.
         var flightPlanCoordinates = [];
@@ -79,13 +79,13 @@ $(document).ready(function () {
           strokeWeight: 0.7
         });
 
-        if (flightPathStore.hasOwnProperty(flight)) {
+        if (flightPathStore.hasOwnProperty(objectId)) {
           // Path already exists; remove old path to prevent drawing over the old line.
-          flightPathStore[flight].setMap(null);
+          flightPathStore[objectId].setMap(null);
         }
 
         flightPath.setMap(map);
-        flightPathStore[flight] = flightPath;
+        flightPathStore[objectId] = flightPath;
 
         var curPos = flightPlanCoordinates[flightPlanCoordinates.length - 1];
         var planeIcon = {
@@ -98,14 +98,14 @@ $(document).ready(function () {
         };
 
         var marker = null;
-        if (markerStore.hasOwnProperty(flight)) {
-          markerStore[flight].setPosition(curPos);
-          markerStore[flight].setIcon(planeIcon);
+        if (markerStore.hasOwnProperty(objectId)) {
+          markerStore[objectId].setPosition(curPos);
+          markerStore[objectId].setIcon(planeIcon);
         } else {
           marker = new google.maps.Marker({
-            flight: flight,
+            flight: objectId,
             position: curPos,
-            title: flight + ' - click to open',
+            title: objectId + ' - click to open',
             icon: planeIcon,
             map: map
          });
@@ -114,7 +114,7 @@ $(document).ready(function () {
             openFlightInfoWindow(marker.flight);
           });
 
-          markerStore[flight] = marker;
+          markerStore[objectId] = marker;
         }
 
       })(flights[i]);

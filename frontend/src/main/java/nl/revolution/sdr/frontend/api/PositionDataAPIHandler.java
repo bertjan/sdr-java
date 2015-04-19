@@ -33,7 +33,7 @@ public class PositionDataAPIHandler extends AbstractHandler {
 
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        if (!request.getRequestURI().equals("/api/plane")) {
+        if (!request.getRequestURI().equals("/api/positions")) {
             new NotFoundHandler().handle(target, baseRequest, request, response);
             return;
         }
@@ -55,25 +55,25 @@ public class PositionDataAPIHandler extends AbstractHandler {
         Long minTimestamp = determineMinTimestamp(maxHistoryInMinutes);
 
         List<JSONObject> results = positionDataService.getPositionData(minTimestamp);
-        Map<String, List<JSONObject>> flightDataMap = convertDBResultsToFlightDataMap(results);
+        Map<String, List<JSONObject>> positionDataMap = convertDBResultsToFlightDataMap(results);
 
         write(out, "{");
         writeHistory(out, maxHistoryInMinutes);
-        write(out, "\"flights\":[");
+        write(out, "\"positions\":[");
 
         int index = 0;
         Long latestTimestamp = 0l;
 
-        for (String flight : flightDataMap.keySet()) {
-            List<Map> flightPositions = new ArrayList<>();
-            latestTimestamp = processFlightData(latestTimestamp, flightPositions, flightDataMap.get(flight));
+        for (String objectId : positionDataMap.keySet()) {
+            List<Map> objectPositions = new ArrayList<>();
+            latestTimestamp = processPositionData(latestTimestamp, objectPositions, positionDataMap.get(objectId));
 
-            if (!flightPositions.isEmpty()) {
+            if (!objectPositions.isEmpty()) {
                 index++;
                 if (index > 1) {
                     write(out, ",\n");
                 }
-                write(out, createPositionListForFlight(flight, flightPositions).toJSONString());
+                write(out, createPositionListForObject(objectId, objectPositions).toJSONString());
             }
         }
 
@@ -86,15 +86,15 @@ public class PositionDataAPIHandler extends AbstractHandler {
         write(out, "\"history\":" + maxHistoryInMinutes + ",");
     }
 
-    private JSONObject createPositionListForFlight(String flight, List<Map> coords) {
+    private JSONObject createPositionListForObject(String objectId, List<Map> coords) {
         Map<String, Object> flightCoord = new HashMap<>();
-        flightCoord.put("flight", flight);
+        flightCoord.put("objectId", objectId);
         flightCoord.put("positions", coords);
         flightCoord.put("heading", String.valueOf(coords.get(coords.size() - 1).get("heading")));
         return new JSONObject(flightCoord);
     }
 
-    private Long processFlightData(Long latestTimestamp, List<Map> positions, List<JSONObject> flightData) {
+    private Long processPositionData(Long latestTimestamp, List<Map> positions, List<JSONObject> flightData) {
         for (JSONObject result : flightData) {
             Map<String, String> position = new HashMap<>();
 
@@ -115,7 +115,7 @@ public class PositionDataAPIHandler extends AbstractHandler {
     private Map<String, List<JSONObject>> convertDBResultsToFlightDataMap(List<JSONObject> results) {
         Map<String,List<JSONObject>> allFlightData = new HashMap<>();
         for (JSONObject result : results) {
-            String flightId = String.valueOf(result.get("flight"));
+            String flightId = String.valueOf(result.get("objectId"));
             if (!allFlightData.containsKey(flightId)) {
                 allFlightData.put(flightId, new ArrayList<>());
             }

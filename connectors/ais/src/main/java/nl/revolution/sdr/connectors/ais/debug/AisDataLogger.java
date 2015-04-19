@@ -45,17 +45,17 @@ public class AisDataLogger {
                     messageType == AISMessageType.PositionReportClassAAssignedSchedule ||
                     messageType == AISMessageType.PositionReportClassAResponseToInterrogation) {
                 PositionReport positionMessage = (PositionReport) aisMessage;
-                Map<String, Object> flightData = new HashMap<>();
-                flightData.put("flight", positionMessage.getSourceMmsi().getMMSI());
-                flightData.put("longitude", positionMessage.getLongitude());
-                flightData.put("heading", positionMessage.getCourseOverGround());
-                flightData.put("latitude", positionMessage.getLatitude());
-                flightData.put("timestamp", System.currentTimeMillis());
-                dataService.positionDataReceived(flightData);
+                Map<String, Object> shipData = new HashMap<>();
+                shipData.put("objectId", positionMessage.getSourceMmsi().getMMSI());
+                shipData.put("longitude", positionMessage.getLongitude());
+                shipData.put("heading", positionMessage.getCourseOverGround());
+                shipData.put("latitude", positionMessage.getLatitude());
+                shipData.put("timestamp", System.currentTimeMillis());
+                dataService.positionDataReceived(shipData);
             } else if (messageType == AISMessageType.BaseStationReport) {
                 BaseStationReport reportMessage = (BaseStationReport) aisMessage;
                 Map<String, Object> flightData = new HashMap<>();
-                flightData.put("flight", reportMessage.getSourceMmsi().getMMSI());
+                flightData.put("objectId", reportMessage.getSourceMmsi().getMMSI());
                 flightData.put("longitude", reportMessage.getLongitude());
                 flightData.put("heading", 0.0);
                 flightData.put("latitude", reportMessage.getLatitude());

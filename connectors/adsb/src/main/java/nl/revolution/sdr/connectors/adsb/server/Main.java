@@ -17,7 +17,7 @@ public class Main {
         Dump1090Source dataServer = new Dump1090Source(ConfigService.getInstance().getDump1090Url(), dataService);
         dataServer.start();
 
-        LOG.info("Press enter to quit.");
+        LOG.info("ADS-B connector started. Press enter to quit.");
         System.in.read();
 
         dataServer.stop();

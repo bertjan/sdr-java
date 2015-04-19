@@ -45,7 +45,7 @@ public class FlightData {
     public String toString() {
         StringBuilder result = new StringBuilder();
         result.append("{")
-                .append("\"flight\":\"").append(flightId).append("\",")
+                .append("\"objectId\":\"").append(flightId).append("\",")
                 .append("\"altitude\":").append(altitude).append(",")
                 .append("\"icao\":\"").append(icao).append("\",")
                 .append("\"longitude\":").append(longitude).append(",")
@@ -60,7 +60,7 @@ public class FlightData {
 
     public Map toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("flight", flightId);
+        map.put("objectId", flightId);
         map.put("altitude", altitude);
         map.put("icao", icao);
         map.put("longitude", longitude);
