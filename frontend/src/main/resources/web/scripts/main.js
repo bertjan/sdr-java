@@ -37,7 +37,7 @@ $(document).ready(function () {
     });
 
     request.done(function(data) {
-      processFlightData(data);
+      processPositionData(data);
     });
 
     request.fail(function( jqXHR, textStatus, errorThrown ) {
@@ -49,7 +49,7 @@ $(document).ready(function () {
 
   }
 
-  function processFlightData(data) {
+  function processPositionData(data) {
     $("#history").text(data.history);
     $("#updated").text(data.updated);
     var flights = data.positions;
@@ -59,6 +59,7 @@ $(document).ready(function () {
     for (var i = 0, len = flights.length; i < len; i++) {
       (function(flightData) {
         var objectId = flightData.objectId;
+        var objectType = flightData.objectType;
         var heading = flightData.heading;
         var positions = flightData.positions;
         processedFlights.push(objectId);
@@ -70,11 +71,18 @@ $(document).ready(function () {
           flightPlanCoordinates.push(new google.maps.LatLng(position.lat, position.lon));
         }
 
+
+        if (objectType == 'SHIP') {
+          pathColor = '#0000FF';
+        } else {
+          pathColor = '#FF0000';
+        }
+
         // Draw flight path.
         var flightPath = new google.maps.Polyline({
           path: flightPlanCoordinates,
           geodesic: true,
-          strokeColor: '#FF0000',
+          strokeColor: pathColor,
           strokeOpacity: 0.8,
           strokeWeight: 0.7
         });
@@ -111,7 +119,7 @@ $(document).ready(function () {
          });
 
           google.maps.event.addDomListener(marker, 'click', function() {
-            openFlightInfoWindow(marker.flight);
+            openObjectInfoWindow(marker.flight, objectType);
           });
 
           markerStore[objectId] = marker;
@@ -143,8 +151,12 @@ $(document).ready(function () {
     window.setTimeout(getFlightData, INTERVAL);
   }
 
-  function openFlightInfoWindow(flight) {
-    url = 'http://planefinder.net/flight/' + flight;
+  function openObjectInfoWindow(objectId, objectType) {
+    if (objectType == 'SHIP') {
+      url = 'http://www.marinetraffic.com/en/ais/details/ships/' + objectId;
+    } else {
+      url = 'http://planefinder.net/flight/' + objectId;
+    }
     window.open(url,'_blank');
   }
 

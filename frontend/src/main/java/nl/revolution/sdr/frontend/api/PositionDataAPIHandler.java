@@ -55,7 +55,7 @@ public class PositionDataAPIHandler extends AbstractHandler {
         Long minTimestamp = determineMinTimestamp(maxHistoryInMinutes);
 
         List<JSONObject> results = positionDataService.getPositionData(minTimestamp);
-        Map<String, List<JSONObject>> positionDataMap = convertDBResultsToFlightDataMap(results);
+        Map<String, List<JSONObject>> positionDataMap = convertDBResultsToPositionDataMap(results);
 
         write(out, "{");
         writeHistory(out, maxHistoryInMinutes);
@@ -66,14 +66,20 @@ public class PositionDataAPIHandler extends AbstractHandler {
 
         for (String objectId : positionDataMap.keySet()) {
             List<Map> objectPositions = new ArrayList<>();
-            latestTimestamp = processPositionData(latestTimestamp, objectPositions, positionDataMap.get(objectId));
+            List<JSONObject> positionData = positionDataMap.get(objectId);
+            latestTimestamp = processPositionData(latestTimestamp, objectPositions, positionData);
+
+            String objectType = null;
+            if (!positionData.isEmpty()) {
+                objectType = String.valueOf(positionData.get(0).get("objectType"));
+            }
 
             if (!objectPositions.isEmpty()) {
                 index++;
                 if (index > 1) {
                     write(out, ",\n");
                 }
-                write(out, createPositionListForObject(objectId, objectPositions).toJSONString());
+                write(out, createPositionListForObject(objectId, objectType, objectPositions).toJSONString());
             }
         }
 
@@ -86,16 +92,17 @@ public class PositionDataAPIHandler extends AbstractHandler {
         write(out, "\"history\":" + maxHistoryInMinutes + ",");
     }
 
-    private JSONObject createPositionListForObject(String objectId, List<Map> coords) {
-        Map<String, Object> flightCoord = new HashMap<>();
-        flightCoord.put("objectId", objectId);
-        flightCoord.put("positions", coords);
-        flightCoord.put("heading", String.valueOf(coords.get(coords.size() - 1).get("heading")));
-        return new JSONObject(flightCoord);
+    private JSONObject createPositionListForObject(String objectId, String objectType, List<Map> coords) {
+        Map<String, Object> positionData = new HashMap<>();
+        positionData.put("objectId", objectId);
+        positionData.put("objectType", objectType);
+        positionData.put("positions", coords);
+        positionData.put("heading", String.valueOf(coords.get(coords.size() - 1).get("heading")));
+        return new JSONObject(positionData);
     }
 
-    private Long processPositionData(Long latestTimestamp, List<Map> positions, List<JSONObject> flightData) {
-        for (JSONObject result : flightData) {
+    private Long processPositionData(Long latestTimestamp, List<Map> positions, List<JSONObject> positionData) {
+        for (JSONObject result : positionData) {
             Map<String, String> position = new HashMap<>();
 
             position.put("lat", String.valueOf(result.get("latitude")));
@@ -112,16 +119,16 @@ public class PositionDataAPIHandler extends AbstractHandler {
         return latestTimestamp;
     }
 
-    private Map<String, List<JSONObject>> convertDBResultsToFlightDataMap(List<JSONObject> results) {
-        Map<String,List<JSONObject>> allFlightData = new HashMap<>();
+    private Map<String, List<JSONObject>> convertDBResultsToPositionDataMap(List<JSONObject> results) {
+        Map<String,List<JSONObject>> allPositionData = new HashMap<>();
         for (JSONObject result : results) {
-            String flightId = String.valueOf(result.get("objectId"));
-            if (!allFlightData.containsKey(flightId)) {
-                allFlightData.put(flightId, new ArrayList<>());
+            String objectId = String.valueOf(result.get("objectId"));
+            if (!allPositionData.containsKey(objectId)) {
+                allPositionData.put(objectId, new ArrayList<>());
             }
-            allFlightData.get(flightId).add(result);
+            allPositionData.get(objectId).add(result);
         }
-        return allFlightData;
+        return allPositionData;
     }
 
     private Long determineMinTimestamp(Long maxHistoryInMinutes) {

@@ -42,7 +42,7 @@ public class Dump1090Source {
                     FlightData previousFlightData = processedData.get(currentFlightData.getFlightId());
                     // If this is a new event, persist it.
                     if (!currentFlightData.equals(previousFlightData)) {
-                        positionDataService.positionDataReceived(currentFlightData.toMap());
+                        positionDataService.positionDataReceived(currentFlightData.toPositionData());
                     }
                     processedData.put(currentFlightData.getFlightId(), currentFlightData);
                 }

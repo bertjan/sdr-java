@@ -1,5 +1,6 @@
 package nl.revolution.sdr.connectors.adsb.domain;
 
+import nl.revolution.sdr.services.positiondata.api.PositionData;
 import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
 
@@ -71,6 +72,16 @@ public class FlightData {
         return map;
     }
 
+    public PositionData toPositionData() {
+        PositionData positionData = new PositionData()
+                .withType(PositionData.ObjectType.AIRCRAFT)
+                .withObjectId(flightId)
+                .withLongitude(longitude)
+                .withLatitude(latitude)
+                .withHeading(heading)
+                .withTimestamp(timestamp);
+        return positionData;
+    }
 
     public Map toMapWithoutTimestamp() {
         Map result = this.toMap();

@@ -3,11 +3,11 @@ package nl.revolution.sdr.services.positiondata.mongodb;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import nl.revolution.sdr.services.positiondata.api.PositionData;
 import nl.revolution.sdr.services.positiondata.api.PositionDataService;
 import org.json.simple.JSONObject;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MongoPositionDataService implements PositionDataService {
@@ -23,11 +23,11 @@ public class MongoPositionDataService implements PositionDataService {
     }
 
     @Override
-    public void positionDataReceived(Map dataMap) {
+    public void positionDataReceived(PositionData positionData) {
         logPositionDataReceived();
 
         // Write data to Mongo.
-        DBObject data = new BasicDBObject(dataMap);
+        DBObject data = new BasicDBObject(positionData.toMap());
         MongoConnector.getInstance().getDB().getCollection(COLLECTION_NAME).insert(data);
     }
 
