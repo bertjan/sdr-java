@@ -13,6 +13,42 @@
     <groupId>nl.revolution.sdr-java</groupId>
     <artifactId>frontend</artifactId>
 
+    <build>
+        <finalName>sdr-java-frontend-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>nl.revolution.sdr.frontend.server.Main</mainClass>
+                                </transformer>
+                            </transformers>
+                            <!-- Remove signed JAR info since we're building a new shaded JAR. -->
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>nl.revolution.sdr-java.services</groupId>
