@@ -10,9 +10,9 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>frontend</module>
-        <module>connectors</module>
         <module>services</module>
+        <module>connectors</module>
+        <module>frontend</module>
     </modules>
 
     <properties>
