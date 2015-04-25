@@ -41,23 +41,11 @@ Create the following index to speed up queries over lots of data:
 db.positionData.ensureIndex({"timestamp": 1}, {"background": true});
 ```
 
-Getting started
+Maven module structure
 ---
-TODO: update this
-* Make sure a compatible RTL-SDR device is inserted and working correctly (use rtl_test to verify)
-* Make sure MongoDB is installed and running
-* Download and build dump1090 (https://github.com/antirez/dump1090)
-* Start dump1090:
-```
-./dump1090 --interactive --net --aggressive --metric --interactive-ttl 5
-```
-* Verify that the dump1090 data API is reachable over HTTP (http://localhost:8080/data.json)
-* Edit Config.java, set URL to dump1090 API accordingly
-* Build and run java-adsb-receiver
-```
-mvn clean verify
-```
-* The frontend should come up at http://localhost:1090
+* connectors: contains input sources for AIS and ADS-B that write to MongoDB
+* frontend: web frontend and API to display data written by the connectors
+* services: shared services used by multiple modules (configuration and MongoDB services)
 
 
 Setting up a Raspberry Pi as a remote ADS-B / AIS receiver
