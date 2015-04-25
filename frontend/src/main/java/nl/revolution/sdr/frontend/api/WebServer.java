@@ -12,7 +12,8 @@ public class WebServer {
     public Server createServer(int httpPort, PositionDataService positionDataService) {
         ResourceHandler webResourceHandler = new ResourceHandler();
         webResourceHandler.setDirectoriesListed(false);
-        webResourceHandler.setResourceBase("frontend/src/main/resources/web");
+        String webDir = this.getClass().getClassLoader().getResource("web").toExternalForm();
+        webResourceHandler.setResourceBase(webDir);
         webResourceHandler.setWelcomeFiles(new String[]{"views/index.html"});
 
         HandlerList handlers = new HandlerList();
