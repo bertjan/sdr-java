@@ -3,6 +3,7 @@ package nl.revolution.sdr.connectors.ais.decoder;
 import dk.tbsalling.aismessages.ais.messages.PositionReport;
 import dk.tbsalling.aismessages.ais.messages.types.AISMessageType;
 import dk.tbsalling.aismessages.nmea.NMEAMessageHandler;
+import dk.tbsalling.aismessages.nmea.exceptions.InvalidMessage;
 import dk.tbsalling.aismessages.nmea.exceptions.NMEAParseException;
 import dk.tbsalling.aismessages.nmea.messages.NMEAMessage;
 import nl.revolution.sdr.services.positiondata.api.PositionData;
@@ -34,7 +35,7 @@ public class AISMessageDecoder {
                             .withTimestamp(System.currentTimeMillis()));
                 }
             }).accept(NMEAMessage.fromString(aisMessageString));
-        } catch (NMEAParseException e) {
+        } catch (NMEAParseException | InvalidMessage e) {
             // Do nothing.
         }
     }
