@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
-public class AisDataLogger {
+public class AISTMPDataLogger {
 
     public static void main(String... args) throws IOException {
         AISMessageDecoder aisMessageDecoder = new AISMessageDecoder(new LoggingDataService());
