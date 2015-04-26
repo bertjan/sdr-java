@@ -105,8 +105,15 @@ public class PositionDataAPIHandler extends AbstractHandler {
         for (JSONObject result : positionData) {
             Map<String, String> position = new HashMap<>();
 
-            position.put("lat", String.valueOf(result.get("latitude")));
-            position.put("lon", String.valueOf(result.get("longitude")));
+            Double latitude = (Double)result.get("latitude");
+            Double longitude = (Double)result.get("longitude");
+
+            if (!isValidCoordinate(latitude, longitude)) {
+                continue;
+            }
+
+            position.put("lat", String.valueOf(latitude));
+            position.put("lon", String.valueOf(longitude));
             position.put("heading", String.valueOf(result.get("heading")));
             positions.add(position);
 
@@ -114,7 +121,6 @@ public class PositionDataAPIHandler extends AbstractHandler {
             if (currentTimestamp > latestTimestamp) {
                 latestTimestamp = currentTimestamp;
             }
-
         }
         return latestTimestamp;
     }
@@ -164,7 +170,9 @@ public class PositionDataAPIHandler extends AbstractHandler {
         write(out, ", \"updated\":\"" + updated + "\"");
     }
 
-
+    private boolean isValidCoordinate(Double latitude, Double longitude) {
+        return (latitude > 0.0 && latitude < 90.0) && (longitude > -180.0 && longitude < 180.0);
+    }
 
 }
 
