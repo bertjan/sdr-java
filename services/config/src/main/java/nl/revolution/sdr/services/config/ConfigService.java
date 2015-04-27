@@ -16,7 +16,7 @@ public class ConfigService {
     }
 
     public String getDatabaseHost() {
-        return "localhost";
+        return "192.168.2.2";
     }
 
     public int getHttpPort() {

@@ -19,7 +19,7 @@ public class LoggingDataService implements PositionDataService {
     }
 
     @Override
-    public List<JSONObject> getPositionData(Long minTimestamp) {
+    public List<JSONObject> getPositionData(Long minTimestamp, Long maxTimestamp) {
         throw new NotImplementedException("Logging only");
     }
 }

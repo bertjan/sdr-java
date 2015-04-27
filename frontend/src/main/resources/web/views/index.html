@@ -23,15 +23,17 @@
 
         <div class="row form-inline">
                 <span class="form-group">
-                    <label for="filter">History to include (minutes)</label>
-                    <input type="text" class="form-control" id="filter" placeholder="15 (default)">
+                    History to include: <label for="from">from</label>
+                    <input type="text" class="form-control input-small" id="from" placeholder="15 (default)"> minutes ago,
+                    <label for="to">to</label>
+                    <input type="text" class="form-control input-small" id="to" placeholder="0 (now)"> minutes ago.
                 </span>
         </div>
 
         <div class="row">
             <p>
-                Showing data from last <span id="history"></span> minutes.<br/>
-                Last update: <span id="updated"></span>
+                Showing data from <span id="history-from"></span> minutes ago to <span id="history-to"></span>.<br/>
+                Latest data in timeframe: <span id="updated"></span>.
             </p>
         </div>
 

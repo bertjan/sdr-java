@@ -42,23 +42,19 @@ public class PositionDataAPIHandler extends AbstractHandler {
         response.setStatus(HttpServletResponse.SC_OK);
         baseRequest.setHandled(true);
 
-        String filter = request.getParameter("filter");
-        OutputStream outputStream = response.getOutputStream();
-        createAPIResponse(filter, outputStream);
-        outputStream.flush();
-        outputStream.close();
+        createAPIResponse(request.getParameter("from"), request.getParameter("to"), response.getOutputStream());
     }
 
 
-    private void createAPIResponse(String filter, OutputStream out) throws IOException {
-        Long maxHistoryInMinutes = determineMaxHistory(filter);
-        Long minTimestamp = determineMinTimestamp(maxHistoryInMinutes);
+    private void createAPIResponse(String inputFrom, String inputTo, OutputStream out) throws IOException {
+        Long from = processInputFrom(inputFrom);
+        Long to = processInputTo(inputTo);
 
-        List<JSONObject> results = positionDataService.getPositionData(minTimestamp);
+        List<JSONObject> results = positionDataService.getPositionData(determineTimestamp(from), determineTimestamp(to));
         Map<String, List<JSONObject>> positionDataMap = convertDBResultsToPositionDataMap(results);
 
         write(out, "{");
-        writeHistory(out, maxHistoryInMinutes);
+        write(out, "\"from\":" + from + "," + "\"to\":" + to + ",");
         write(out, "\"positions\":[");
 
         int index = 0;
@@ -86,10 +82,9 @@ public class PositionDataAPIHandler extends AbstractHandler {
         write(out, "]");
         writeLastUpdatedTimestamp(out, latestTimestamp);
         write(out, "}");
-    }
 
-    private void writeHistory(OutputStream out, Long maxHistoryInMinutes) throws IOException {
-        write(out, "\"history\":" + maxHistoryInMinutes + ",");
+        out.flush();
+        out.close();
     }
 
     private JSONObject createPositionListForObject(String objectId, String objectType, List<Map> coords) {
@@ -137,22 +132,38 @@ public class PositionDataAPIHandler extends AbstractHandler {
         return allPositionData;
     }
 
-    private Long determineMinTimestamp(Long maxHistoryInMinutes) {
-        Long maxAgeInMS = maxHistoryInMinutes * 60 * 1000;
+    private Long determineTimestamp(Long tsInMinutes) {
+        if (tsInMinutes == null) {
+            return null;
+        }
+        Long maxAgeInMS = tsInMinutes * 60 * 1000;
         return System.currentTimeMillis() - maxAgeInMS;
     }
 
-    private Long determineMaxHistory(String filter) {
-        Long maxHistoryInMinutes = DEFAULT_MAX_AGE_IN_MINUTES;
+    private Long processInputFrom(String from) {
+        Long maxFromInMinutes = DEFAULT_MAX_AGE_IN_MINUTES;
 
-        if (StringUtils.isNotEmpty(filter)) {
+        if (StringUtils.isNotEmpty(from)) {
             try {
-                maxHistoryInMinutes = Long.valueOf(filter);
+                maxFromInMinutes = Long.valueOf(from);
             } catch (NumberFormatException e) {
-                LOG.warn("Invalid filter value '" + filter + "', using default value '" + maxHistoryInMinutes + "'.");
+                LOG.warn("Invalid 'from' input value '" + from + "', using default value '" + maxFromInMinutes + "'.");
             }
         }
-        return maxHistoryInMinutes;
+        return maxFromInMinutes;
+    }
+
+    private Long processInputTo(String to) {
+        Long maxToInMinutes = null;
+
+        if (StringUtils.isNotEmpty(to)) {
+            try {
+                maxToInMinutes = Long.valueOf(to);
+            } catch (NumberFormatException e) {
+                LOG.warn("Invalid 'to' input value '" + to + "', using default value '" + maxToInMinutes + "'.");
+            }
+        }
+        return maxToInMinutes;
     }
 
     private static void write(OutputStream out, String data) throws IOException {

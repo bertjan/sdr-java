@@ -26,13 +26,14 @@ $(document).ready(function () {
 
 
   function getFlightData() {
-    var filter = $("#filter").val();
+    var filter_from = $("#from").val();
+    var filter_to = $("#to").val();
 
     var request = $.ajax({
       url:  "/api/positions",
       type: "GET",
       dataType: "json",
-      data: { filter : filter },
+      data: { from : filter_from, to: filter_to },
       cache: false
     });
 
@@ -50,7 +51,9 @@ $(document).ready(function () {
   }
 
   function processPositionData(data) {
-    $("#history").text(data.history);
+    $("#history-from").text(data.from);
+    $("#history-to").text(data.to ? data.to + ' minutes ago' : 'now');
+
     $("#updated").text(data.updated);
     var flights = data.positions;
 

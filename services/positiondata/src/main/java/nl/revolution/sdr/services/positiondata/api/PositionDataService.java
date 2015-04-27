@@ -8,5 +8,5 @@ public interface PositionDataService {
 
     public void positionDataReceived(PositionData data);
 
-    public List<JSONObject> getPositionData(Long minTimestamp);
+    public List<JSONObject> getPositionData(Long minTimestamp, Long maxTimestamp);
 }
