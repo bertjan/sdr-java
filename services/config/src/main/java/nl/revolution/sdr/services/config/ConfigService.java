@@ -27,4 +27,8 @@ public class ConfigService {
         return "http://192.168.2.150:8080/data.json";
     }
 
+    public long getAdsbFetchDataIntervalInMS() {
+        return 1000;
+    }
+
 }

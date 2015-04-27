@@ -1,6 +1,7 @@
 package nl.revolution.sdr.connectors.adsb.decoder;
 
 import nl.revolution.sdr.connectors.adsb.domain.FlightData;
+import nl.revolution.sdr.services.config.ConfigService;
 import nl.revolution.sdr.services.positiondata.api.PositionDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,7 @@ import java.util.Map;
 public class Dump1090Source {
 
     private static final Logger LOG = LoggerFactory.getLogger(Dump1090Source.class);
-    private static final int FETCH_DATA_INTERVAL = 250;
+    private static final long FETCH_DATA_INTERVAL = ConfigService.getInstance().getAdsbFetchDataIntervalInMS();
 
     private final Dump1090Client dump1090Client;
     private final PositionDataService positionDataService;
