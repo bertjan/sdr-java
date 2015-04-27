@@ -7,6 +7,7 @@ import nl.revolution.sdr.services.positiondata.api.PositionData;
 import nl.revolution.sdr.services.positiondata.api.PositionDataService;
 import org.json.simple.JSONObject;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,7 @@ public class MongoPositionDataService implements PositionDataService {
 
         // Write data to Mongo.
         DBObject data = new BasicDBObject(positionData.toMap());
+        data.put("createdAt", new Date());
         MongoConnector.getInstance().getDB().getCollection(COLLECTION_NAME).insert(data);
     }
 
