@@ -50,10 +50,17 @@ public class MongoPositionDataService implements PositionDataService {
 
         DBObject sort = new BasicDBObject("timestamp", 1);
 
+        DBObject fields = new BasicDBObject("timestamp", 1)
+                .append("heading", 1)
+                .append("latitude", 1)
+                .append("objectId", 1)
+                .append("objectType", 1)
+                .append("longitude", 1);
+
         final List<DBObject> dbResults;
-        try (DBCursor cursor = MongoConnector.getInstance()
+            try (DBCursor cursor = MongoConnector.getInstance()
                 .getDB().getCollection(COLLECTION_NAME)
-                .find(filter).sort(sort)) {
+                .find(filter, fields).sort(sort)) {
             dbResults = cursor.toArray();
             cursor.close();
         }

@@ -38,7 +38,7 @@ Database setup
 Install and start MongoDB. Database 'sdr' and collection 'positionData' will be created automatically.
 Create the following index to speed up queries over lots of data:
 ```
-db.positionData.ensureIndex({"timestamp": 1}, {"background": true});
+db.positionData.ensureIndex({"timestamp": 1, "_id": 1, "heading" : 1, "latitude" : 1, "objectId" : 1, "objectType" : 1, "longitude" : 1}, {"background": true});
 ```
 
 Maven module structure
