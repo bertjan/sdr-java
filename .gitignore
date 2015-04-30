@@ -2,3 +2,4 @@
 *.iml
 dependency-reduced-pom.xml
 MANIFEST.MF
+deploy.sh

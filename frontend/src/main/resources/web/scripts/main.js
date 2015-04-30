@@ -3,9 +3,9 @@ $(document).ready(function () {
   // Time between screen refreshes.
   var INTERVAL = 500;
 
-  // Marker / flight trajectory cache.
+  // Marker / track cache.
   var markerStore = {};
-  var flightPathStore = {};
+  var trackStore = {};
 
   var homeLatLong = new google.maps.LatLng(52.129006, 5.060932);
   var myOptions = {
@@ -22,10 +22,10 @@ $(document).ready(function () {
     map: map
   });
 
-  getFlightData();
+  getPositionData();
 
 
-  function getFlightData() {
+  function getPositionData() {
     var filter_from = $("#from").val();
     var filter_to = $("#to").val();
 
@@ -45,7 +45,7 @@ $(document).ready(function () {
       console.log('got error (textStatus): ', textStatus);
       console.log('got error (errorThrown): ', errorThrown);
       console.log('got error  (jqXHR): ', jqXHR);
-      window.setTimeout(getFlightData, INTERVAL);
+      window.setTimeout(getPositionData, INTERVAL);
     });
 
   }
@@ -55,23 +55,24 @@ $(document).ready(function () {
     $("#history-to").text(data.to ? data.to + ' minutes ago' : 'now');
 
     $("#updated").text(data.updated);
-    var flights = data.positions;
+    var positions = data.positions;
 
-    var processedFlights = [];
+    var processedObjects = [];
 
-    for (var i = 0, len = flights.length; i < len; i++) {
-      (function(flightData) {
-        var objectId = flightData.objectId;
-        var objectType = flightData.objectType;
-        var heading = flightData.heading;
-        var positions = flightData.positions;
-        processedFlights.push(objectId);
+    for (var i = 0, len = positions.length; i < len; i++) {
+      (function(positionData) {
+        var objectId = positionData.objectId;
+        var objectType = positionData.objectType;
+        var heading = positionData.heading;
+        var timestamp = positionData.timestamp;
+        var positions = positionData.positions;
+        processedObjects.push(objectId);
 
-        // Build list of coordinates for flight path.
-        var flightPlanCoordinates = [];
+        // Build list of coordinates for track.
+        var trackCoordinates = [];
         for (var pos = 0, posLen = positions.length; pos < posLen; pos++) {
           var position = positions[pos];
-          flightPlanCoordinates.push(new google.maps.LatLng(position.lat, position.lon));
+          trackCoordinates.push(new google.maps.LatLng(position.lat, position.lon));
         }
 
 
@@ -81,24 +82,24 @@ $(document).ready(function () {
           pathColor = '#FF0000';
         }
 
-        // Draw flight path.
-        var flightPath = new google.maps.Polyline({
-          path: flightPlanCoordinates,
+        // Draw track.
+        var track = new google.maps.Polyline({
+          path: trackCoordinates,
           geodesic: true,
           strokeColor: pathColor,
           strokeOpacity: 0.8,
           strokeWeight: 0.7
         });
 
-        if (flightPathStore.hasOwnProperty(objectId)) {
+        if (trackStore.hasOwnProperty(objectId)) {
           // Path already exists; remove old path to prevent drawing over the old line.
-          flightPathStore[objectId].setMap(null);
+          trackStore[objectId].setMap(null);
         }
 
-        flightPath.setMap(map);
-        flightPathStore[objectId] = flightPath;
+        track.setMap(map);
+        trackStore[objectId] = track;
 
-        var curPos = flightPlanCoordinates[flightPlanCoordinates.length - 1];
+        var curPos = trackCoordinates[trackCoordinates.length - 1];
         var planeIcon = {
           path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
           scale: 1.0,
@@ -114,44 +115,44 @@ $(document).ready(function () {
           markerStore[objectId].setIcon(planeIcon);
         } else {
           marker = new google.maps.Marker({
-            flight: objectId,
+            objectId: objectId,
             position: curPos,
-            title: objectId + ' - click to open',
+            title: objectId + ' at ' + timestamp + ' - click to view details',
             icon: planeIcon,
             map: map
          });
 
           google.maps.event.addDomListener(marker, 'click', function() {
-            openObjectInfoWindow(marker.flight, objectType);
+            openObjectInfoWindow(marker.objectId, objectType);
           });
 
           markerStore[objectId] = marker;
         }
 
-      })(flights[i]);
+      })(positions[i]);
     }
 
-    // Clean data from flights that are present in the marker / path cache,
+    // Clean data from positions that are present in the marker / path cache,
     // but not present in the data response.
     for (var key in markerStore) {
-      if ($.inArray(key, processedFlights) < 0) {
-        // Flight is in markerStore, but not in data response. Clean it.
+      if ($.inArray(key, processedObjects) < 0) {
+        // Object is in markerStore, but not in data response. Clean it.
         markerStore[key].setMap(null);
         google.maps.event.clearInstanceListeners(markerStore[key]);
         delete markerStore[key];
       }
     }
 
-    for (var key in flightPathStore) {
-      if ($.inArray(key, processedFlights) < 0) {
-        // Flight is in flightPathStore, but not in data response. Clean it.
-        flightPathStore[key].setMap(null);
-        delete flightPathStore[key];
+    for (var key in trackStore) {
+      if ($.inArray(key, processedObjects) < 0) {
+        // Object is in trackStore, but not in data response. Clean it.
+        trackStore[key].setMap(null);
+        delete trackStore[key];
       }
     }
 
     // Eat, sleep, rave, repeat.
-    window.setTimeout(getFlightData, INTERVAL);
+    window.setTimeout(getPositionData, INTERVAL);
   }
 
   function openObjectInfoWindow(objectId, objectType) {

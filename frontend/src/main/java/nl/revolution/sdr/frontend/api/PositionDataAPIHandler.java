@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,8 +93,16 @@ public class PositionDataAPIHandler extends AbstractHandler {
         Map<String, Object> positionData = new HashMap<>();
         positionData.put("objectId", objectId);
         positionData.put("objectType", objectType);
-        positionData.put("positions", coords);
         positionData.put("heading", String.valueOf(coords.get(coords.size() - 1).get("heading")));
+
+        Long timestamp = Long.valueOf(String.valueOf(coords.get(coords.size() - 1).get("timestamp")));
+        positionData.put("timestamp", new Date(timestamp).toString());
+
+        // Remove unnecessary fields.
+        List<String> fieldsToRemove = Arrays.asList("timestamp", "heading");
+        coords.forEach(coordinate -> fieldsToRemove.forEach(coordinate::remove));
+        positionData.put("positions", coords);
+
         return new JSONObject(positionData);
     }
 
@@ -110,9 +120,13 @@ public class PositionDataAPIHandler extends AbstractHandler {
             position.put("lat", String.valueOf(latitude));
             position.put("lon", String.valueOf(longitude));
             position.put("heading", String.valueOf(result.get("heading")));
+
+            String timestamp = String.valueOf(result.get("timestamp"));
+            position.put("timestamp", timestamp);
+
             positions.add(position);
 
-            Long currentTimestamp = Long.valueOf(String.valueOf(result.get("timestamp")));
+            Long currentTimestamp = Long.valueOf(timestamp);
             if (currentTimestamp > latestTimestamp) {
                 latestTimestamp = currentTimestamp;
             }
