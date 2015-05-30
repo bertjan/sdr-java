@@ -1,5 +1,6 @@
 package nl.revolution.sdr.frontend.api;
 
+import nl.revolution.sdr.services.positiondata.api.PositionData;
 import nl.revolution.sdr.services.positiondata.api.PositionDataService;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.lang.StringUtils;
@@ -44,15 +45,31 @@ public class PositionDataAPIHandler extends AbstractHandler {
         response.setStatus(HttpServletResponse.SC_OK);
         baseRequest.setHandled(true);
 
-        createAPIResponse(request.getParameter("from"), request.getParameter("to"), response.getOutputStream());
+        createAPIResponse(request.getParameter("from"),
+                            request.getParameter("to"),
+                            request.getParameter("objectId"),
+                            request.getParameter("type"),
+                            response.getOutputStream());
     }
 
 
-    private void createAPIResponse(String inputFrom, String inputTo, OutputStream out) throws IOException {
+    private void createAPIResponse(String inputFrom, String inputTo, String inputObjectId, String inputType, OutputStream out) throws IOException {
         Long from = processInputFrom(inputFrom);
         Long to = processInputTo(inputTo);
 
-        List<JSONObject> results = positionDataService.getPositionData(determineTimestamp(from), determineTimestamp(to));
+        String objectIdFilter = null;
+        if (StringUtils.isNotBlank(inputObjectId)) {
+            objectIdFilter = inputObjectId;
+        }
+
+        PositionData.ObjectType typeFilter = null;
+        if (PositionData.ObjectType.AIRCRAFT.toString().equalsIgnoreCase(inputType)) {
+            typeFilter = PositionData.ObjectType.AIRCRAFT;
+        } else if (PositionData.ObjectType.SHIP.toString().equalsIgnoreCase(inputType)) {
+            typeFilter = PositionData.ObjectType.SHIP;
+        }
+
+        List<JSONObject> results = positionDataService.getPositionData(determineTimestamp(from), determineTimestamp(to), objectIdFilter, typeFilter);
         Map<String, List<JSONObject>> positionDataMap = convertDBResultsToPositionDataMap(results);
 
         write(out, "{");

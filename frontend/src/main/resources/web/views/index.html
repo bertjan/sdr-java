@@ -29,6 +29,22 @@
                     <input type="text" class="form-control input-small" id="to" placeholder="0 (now)"> minutes ago.
                 </span>
         </div>
+        <div class="row form-inline">
+                <span class="form-group">
+                    Filter by:
+                    <input type="text" class="form-control input-small" id="objectId" placeholder="objectId">
+                    Type:
+                    <label class="radio-inline">
+                        <input type="radio" name="filterOnType" id="filterOnType1" value="aircraft"> Plane
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="filterOnType" id="filterOnType2" value="ship"> Ship
+                    </label>
+                    <label class="radio-inline active">
+                        <input type="radio" name="filterOnType" id="filterOnType3" value="all" checked=""> All
+                    </label>
+                </span>
+        </div>
 
         <div class="row">
             <p>

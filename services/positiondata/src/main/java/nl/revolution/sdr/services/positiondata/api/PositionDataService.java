@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface PositionDataService {
 
-    public void positionDataReceived(PositionData data);
+    void positionDataReceived(PositionData data);
 
-    public List<JSONObject> getPositionData(Long minTimestamp, Long maxTimestamp);
+    List<JSONObject> getPositionData(Long minTimestamp, Long maxTimestamp, String objectId, PositionData.ObjectType objectType);
 }

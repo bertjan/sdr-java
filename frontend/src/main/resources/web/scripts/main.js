@@ -28,12 +28,14 @@ $(document).ready(function () {
   function getPositionData() {
     var filter_from = $("#from").val();
     var filter_to = $("#to").val();
+    var filter_objectId = $("#objectId").val();
+    var filter_type = $('input[name=filterOnType]:checked').val();
 
     var request = $.ajax({
       url:  "/api/positions",
       type: "GET",
       dataType: "json",
-      data: { from : filter_from, to: filter_to },
+      data: { from: filter_from, to: filter_to, objectId: filter_objectId, type: filter_type },
       cache: false
     });
 

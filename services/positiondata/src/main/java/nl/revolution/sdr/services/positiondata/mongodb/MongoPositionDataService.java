@@ -19,7 +19,7 @@ public class MongoPositionDataService implements PositionDataService {
 
     public MongoPositionDataService() {
         // Fire up / check Mongo connection.
-        getPositionData(System.currentTimeMillis(), null);
+        getPositionData(System.currentTimeMillis(), null, null, null);
         tsLastMeasure = System.currentTimeMillis();
     }
 
@@ -33,7 +33,7 @@ public class MongoPositionDataService implements PositionDataService {
         MongoConnector.getInstance().getDB().getCollection(COLLECTION_NAME).insert(data);
     }
 
-    public List<JSONObject> getPositionData(Long minTimestamp, Long maxTimestamp) {
+    public List<JSONObject> getPositionData(Long minTimestamp, Long maxTimestamp, String objectId, PositionData.ObjectType objectType) {
         DBObject filter = new BasicDBObject();
         if (minTimestamp != null) {
             filter.put("timestamp", new BasicDBObject("$gte", minTimestamp));
@@ -46,6 +46,14 @@ public class MongoPositionDataService implements PositionDataService {
                 // Filter already exists; append to the existing filter.
                 ((BasicDBObject)filter.get("timestamp")).append("$lte", maxTimestamp);
             }
+        }
+
+        if (objectId != null) {
+            filter.put("objectId", objectId);
+        }
+
+        if (objectType != null) {
+            filter.put("objectType", objectType.toString());
         }
 
         DBObject sort = new BasicDBObject("timestamp", 1);
