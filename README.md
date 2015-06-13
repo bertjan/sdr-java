@@ -126,4 +126,29 @@ Start dump1090
 ```
 
 
+Bonus: decoding POCSAG pager messages
+---
+
+Install multimon-ng:
+
+```
+apt-get install qt4-qmake
+git clone https://github.com/EliasOenal/multimon-ng.git
+cd multimon-ng
+
+# Skip X11 support, configure raw input only
+cat multimon-ng.pro | sed 's@-lX11@@g' > multimon-ng.tmp && mv multimon-ng.tmp multimon-ng.pro
+echo 'DEFINES += NO_X11' >> multimon-ng.pro 
+echo 'DEFINES += ONLY_RAW' >> multimon-ng.pro 
+
+mkdir build && cd build
+qmake ../multimon-ng.pro
+make && make install
+```
+
+Fire up rtl_fm and pipe the output throuh multimon:
+```
+rtl_fm -f 172446000 -s 22050 -M fm -F 0 -E dc -g 100 | multimon-ng -q -t raw -a POCSAG1200 -a POCSAG512 -a POCSAG2400 -e -p -v1 /dev/stdin
+```
+
 
