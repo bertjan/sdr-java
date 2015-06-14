@@ -54,6 +54,7 @@ Maven module structure
 
 Setting up a Raspberry Pi as a remote ADS-B / AIS receiver
 ---
+Prerequisite: install the latest Raspbian Linux release on the Pi. 
 
 Update the system
 ```
@@ -126,7 +127,7 @@ Start dump1090
 ```
 
 
-Bonus: decoding POCSAG pager messages
+Bonus 1: decoding POCSAG pager messages
 ---
 
 Install multimon-ng:
@@ -151,4 +152,19 @@ Fire up rtl_fm and pipe the output throuh multimon:
 rtl_fm -f 172446000 -s 22050 -M fm -F 0 -E dc -g 100 | multimon-ng -q -t raw -a POCSAG1200 -a POCSAG512 -a POCSAG2400 -e -p -v1 /dev/stdin
 ```
 
+Bonus 2: decoding FLEX pager messages (used for P2000 in the Netherlands)
+---
 
+Install gnuradio and gr-osmosdr (for raspbian, compile from source): 
+
+```
+apt-get install gnuradio gnuradio-dev libboost-all-dev gr-osmosdr
+```
+
+Run the flex decoder:
+```
+git clone https://github.com/zarya/sdr
+cd sdr/receivers/flex/
+chmod +x rtl_flex_noX.py
+./rtl_flex_noX.py -f 169.645M --rx-gain=37.2
+```
