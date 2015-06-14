@@ -55,6 +55,7 @@ Maven module structure
 Setting up a Raspberry Pi as a remote ADS-B / AIS receiver
 ---
 Prerequisite: install the latest Raspbian Linux release on the Pi. 
+Instructions below have been tested on a Raspberry Pi model B+.
 
 Update the system
 ```
@@ -154,17 +155,34 @@ rtl_fm -f 172446000 -s 22050 -M fm -F 0 -E dc -g 100 | multimon-ng -q -t raw -a 
 
 Bonus 2: decoding FLEX pager messages (used for P2000 in the Netherlands)
 ---
-
-Install gnuradio and gr-osmosdr (for raspbian, compile from source): 
+Install gnuradio and gr-osmosdr. 
 
 ```
+echo 'deb http://archive.raspbian.org/raspbian jessie main' >> /etc/apt/sources.list
+apt-get update && apt-get upgrade
 apt-get install gnuradio gnuradio-dev libboost-all-dev gr-osmosdr
 ```
 
-Run the flex decoder:
+Apply a patch to fix an issue in volk (part of gnuradio 3.7.5),
+as described on https://batilanblog.wordpress.com/2015/02/17/using-ec3k-with-raspberry-pi/:
+
+```
+wget http://gnuradio.org/releases/gnuradio/gnuradio-3.7.5.tar.gz
+tar xvzf gnuradio-3.7.5.tar.gz 
+cd gnuradio-3.7.5/
+wget http://gnuradio.org/redmine/attachments/download/821/0001-volk-Fix-volk_malloc-when-alignment-is-1.patch
+patch -p1 < *volk*.patch
+mkdir build && cd build
+cmake -DENABLE_DEFAULT=Off -DENABLE_VOLK=True -Dhave_mfpu_neon=0 ..
+make
+cp volk/lib/libvolk.so.0.0.0 /usr/lib/arm-linux-gnueabihf/
+ldconfig
+```
+
+Install and run the flex decoder:
 ```
 git clone https://github.com/zarya/sdr
 cd sdr/receivers/flex/
-chmod +x rtl_flex_noX.py
-./rtl_flex_noX.py -f 169.645M --rx-gain=37.2
+chmod +x rtl_flex_noX.py 
+./rtl_flex_noX.py -f 169.645M --rx-gain=37.2 --device=rtl=0
 ```
