@@ -35,7 +35,12 @@ $(document).ready(function () {
       url:  "/api/positions",
       type: "GET",
       dataType: "json",
-      data: { from: filter_from, to: filter_to, objectId: filter_objectId, type: filter_type },
+      data: {
+        from: filter_from,
+        to: filter_to,
+        objectId: filter_objectId,
+        type: filter_type
+      },
       cache: false
     });
 
@@ -46,7 +51,7 @@ $(document).ready(function () {
     request.fail(function( jqXHR, textStatus, errorThrown ) {
       console.log('got error (textStatus): ', textStatus);
       console.log('got error (errorThrown): ', errorThrown);
-      console.log('got error  (jqXHR): ', jqXHR);
+      console.log('got error (jqXHR): ', jqXHR);
       window.setTimeout(getPositionData, INTERVAL);
     });
 
@@ -55,10 +60,9 @@ $(document).ready(function () {
   function processPositionData(data) {
     $("#history-from").text(data.from);
     $("#history-to").text(data.to ? data.to + ' minutes ago' : 'now');
-
     $("#updated").text(data.updated);
-    var positions = data.positions;
 
+    var positions = data.positions;
     var processedObjects = [];
 
     for (var i = 0, len = positions.length; i < len; i++) {
@@ -76,7 +80,6 @@ $(document).ready(function () {
           var position = positions[pos];
           trackCoordinates.push(new google.maps.LatLng(position.lat, position.lon));
         }
-
 
         if (objectType == 'SHIP') {
           pathColor = '#0000FF';

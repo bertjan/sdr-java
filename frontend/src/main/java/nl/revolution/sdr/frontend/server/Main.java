@@ -22,7 +22,6 @@ public class Main {
         System.in.read();
 
         viewServer.stop();
-
     }
 
 }
