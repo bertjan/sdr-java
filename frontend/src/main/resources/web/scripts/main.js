@@ -81,7 +81,7 @@ $(document).ready(function () {
           trackCoordinates.push(new google.maps.LatLng(position.lat, position.lon));
         }
 
-        if (objectType == 'SHIP') {
+        if (objectType === 'SHIP') {
           pathColor = '#0000FF';
         } else {
           pathColor = '#FF0000';
@@ -161,7 +161,7 @@ $(document).ready(function () {
   }
 
   function openObjectInfoWindow(objectId, objectType) {
-    if (objectType == 'SHIP') {
+    if (objectType === 'SHIP') {
       url = 'http://www.marinetraffic.com/en/ais/details/ships/' + objectId;
     } else {
       url = 'http://planefinder.net/flight/' + objectId;
