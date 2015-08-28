@@ -13,7 +13,9 @@ flight/ship paths on Google maps.
  and plot flight paths on Google maps.
 
 For a more in-depth introduction, see the following presentation:
-* http://www.slideshare.net/BertJanSchrijver/jfall-2014-decoding-the-airspace-above-you-with-java-and-7-hardware
+* http://www.slideshare.net/BertJanSchrijver/devoxx-uk-2015-decoding-the-air-around-you-with-java-and-7-hardware (slide deck)
+* https://www.parleys.com/tutorial/decoding-air-around-you-java-7-hardware (recording)
+
 
 Dependencies
 ---
